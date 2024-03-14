@@ -1,5 +1,4 @@
 import sys
-sys.path.append("D:/ML_AI_DL_Projects/projects_repo/transformer")
 
 from pathlib import Path
 from typing import Dict
@@ -9,9 +8,9 @@ from pydantic import BaseModel
 from strictyaml import YAML, load
 from yaml.loader import FullLoader
 
-import transformer_app
+import vitapp
 # Project Directories
-PACKAGE_ROOT = Path(transformer_app.__file__).resolve().parent
+PACKAGE_ROOT = Path(vitapp.__file__).resolve().parent
 ROOT = PACKAGE_ROOT.parent
 CONFIG_FILE_PATH = PACKAGE_ROOT / "config.yml"
 
@@ -21,14 +20,14 @@ class AppConfig(BaseModel):
     save_file: str
 
 
-class Transformer(BaseModel):
-    TR_model: Dict
+class ViT(BaseModel):
+    conf: Dict
 
 
 class Config(BaseModel):
     """Master config object."""
 
-    model_transformer: Transformer
+    model_conf: ViT
     app_config: AppConfig
 
 
@@ -78,7 +77,7 @@ def create_and_validate_config(parsed_config: YAML = None) -> Config:
 
     _config = Config(
         app_config=AppConfig(**parsed_config),
-        model_transformer=Transformer(**parsed_config),
+        model_conf=ViT(**parsed_config),
     )
 
     return _config
