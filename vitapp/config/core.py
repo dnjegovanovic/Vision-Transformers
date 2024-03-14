@@ -1,5 +1,4 @@
 import sys
-
 from pathlib import Path
 from typing import Dict
 
@@ -9,6 +8,7 @@ from strictyaml import YAML, load
 from yaml.loader import FullLoader
 
 import vitapp
+
 # Project Directories
 PACKAGE_ROOT = Path(vitapp.__file__).resolve().parent
 ROOT = PACKAGE_ROOT.parent
@@ -58,20 +58,31 @@ def create_and_validate_config(parsed_config: YAML = None) -> Config:
     if parsed_config is None:
         parsed_config = fetch_config_from_yaml()
         for k, v in parsed_config.items():
-            if k == "TR_model":
-                parsed_config[k]["src_vocab_size"] = int(
-                    parsed_config[k]["src_vocab_size"]
+            if k == "ViT":
+                parsed_config[k]["patch_size"] = int(parsed_config[k]["patch_size"])
+                parsed_config[k]["hidden_size"] = int(parsed_config[k]["hidden_size"])
+                parsed_config[k]["num_hidden_layers"] = int(
+                    parsed_config[k]["num_hidden_layers"]
                 )
-                parsed_config[k]["tgt_vocab_size"] = int(
-                    parsed_config[k]["tgt_vocab_size"]
+                parsed_config[k]["num_attention_heads"] = int(
+                    parsed_config[k]["num_attention_heads"]
                 )
-                parsed_config[k]["src_seq_len"] = int(parsed_config[k]["src_seq_len"])
-                parsed_config[k]["tgt_seq_len"] = int(parsed_config[k]["tgt_seq_len"])
-                parsed_config[k]["d_model"] = int(parsed_config[k]["d_model"])
-                parsed_config[k]["num_layer"] = int(parsed_config[k]["num_layer"])
-                parsed_config[k]["num_heads"] = int(parsed_config[k]["num_heads"])
-                parsed_config[k]["dropout"] = float(parsed_config[k]["dropout"])
-                parsed_config[k]["d_ff"] = int(parsed_config[k]["d_ff"])
+                parsed_config[k]["intermediate_size"] = int(
+                    parsed_config[k]["intermediate_size"]
+                )
+                parsed_config[k]["hidden_dropout_prob"] = float(
+                    parsed_config[k]["hidden_dropout_prob"]
+                )
+                parsed_config[k]["attention_probs_dropout_prob"] = float(
+                    parsed_config[k]["attention_probs_dropout_prob"]
+                )
+                parsed_config[k]["initializer_range"] = float(
+                    parsed_config[k]["initializer_range"]
+                )
+                parsed_config[k]["image_size"] = int(parsed_config[k]["image_size"])
+                parsed_config[k]["num_classes"] = int(parsed_config[k]["num_classes"])
+                parsed_config[k]["num_channels"] = int(parsed_config[k]["num_channels"])
+                parsed_config[k]["qkv_bias"] = bool(parsed_config[k]["qkv_bias"])
             else:
                 Exception("No configuration in config file.")
 
