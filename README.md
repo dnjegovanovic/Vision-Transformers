@@ -2,6 +2,14 @@
 
 This is a PyTorch implementation of the paper [An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale]https://arxiv.org/abs/2010.11929). The goal of this project is to provide a simple implementation of the paper.
 
+# Table of Contents
+[Theory Explanation](#TE)
+   - [Create Embeddings](#Emb)
+   - [Multi-head Attention](#MHA)
+   - [Image classification](#CLS)
+
+[Usage](#Usage)
+
 ## Theory Explanation <a name="TE"></a>
 The architecture of this model is inspired by the BERT language architecture. 
 The basic idea behind this approach is that the input image can be viewed as a series of patches that then represent "tokens" that can be further processed through the Attention architecture, which was created for the needs of NLP problems.
