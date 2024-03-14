@@ -21,7 +21,7 @@ class AppConfig(BaseModel):
 
 
 class ViT(BaseModel):
-    conf: Dict
+    ViT: Dict
 
 
 class Config(BaseModel):

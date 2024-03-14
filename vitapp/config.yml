@@ -1,4 +1,4 @@
-package_name: Trnasformer
+package_name: Vision Transformer
 save_file: "./test_dir"
 
 ViT:
