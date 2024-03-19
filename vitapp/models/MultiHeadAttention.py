@@ -30,7 +30,7 @@ class MultiHeadAttention(nn.Module):
             head = AttentionHead(
                 self.hidden_size,
                 self.attention_head_size,
-                config["attention_probs_dropout_prob"],
+                config["attn_probs_dropout_prob"],
                 self.qkv_bias,
             )
             self.heads.append(head)
@@ -42,25 +42,21 @@ class MultiHeadAttention(nn.Module):
 
     def forward(self, x: torch.Tensor, output_attentions=False):
         # Calculate the attention output for each attention head
-        attention_outputs = [head(x) for head in self.heads]
+        attn_outs = [head(x) for head in self.heads]
 
         # Concatenate the attention outputs from each attention head
-        attention_output = torch.cat(
-            [attention_output for attention_output, _ in attention_outputs], dim=-1
-        )
+        attn_out = torch.cat([attn_out for attn_out, _ in attn_outs], dim=-1)
 
         # Project the concatenated attention output back to the hidden size
-        attention_output = self.output_projection(attention_output)
-        attention_output = self.output_dropout(attention_output)
+        attn_out = self.output_projection(attn_out)
+        attn_out = self.output_dropout(attn_out)
 
         # Return the attention output and the attention probabilities (optional)
         if not output_attentions:
-            return (attention_output, None)
+            return (attn_out, None)
         else:
-            attention_probs = torch.stack(
-                [attention_probs for _, attention_probs in attention_outputs], dim=1
-            )
-            return (attention_output, attention_probs)
+            attn_probs = torch.stack([attn_probs for _, attn_probs in attn_outs], dim=1)
+            return (attn_out, attn_probs)
 
 
 class MultiHeadAttentionOptimized(nn.Module):
@@ -87,7 +83,7 @@ class MultiHeadAttentionOptimized(nn.Module):
         self.qkv_proj = nn.Linear(
             self.hidden_size, self.all_head_size * 3, bias=self.qkv_bias
         )
-        self.attn_dropout = nn.Dropout(config["attention_probs_dropout_prob"])
+        self.attn_dropout = nn.Dropout(config["attn_probs_dropout_prob"])
 
         # Create a linear layer to project the attention output back to the hidden size
         # In most cases, all_head_size and hidden_size are the same
@@ -106,13 +102,22 @@ class MultiHeadAttentionOptimized(nn.Module):
         # Resize the query, key, and value to (batch_size, num_attention_heads, sequence_length, attention_head_size)
 
         Q = rearrange(
-            query, "B S (H Z) -> B H S Z", H=self.num_attn_heads, Z=self.attention_head_size
+            query,
+            "B S (H Z) -> B H S Z",
+            H=self.num_attn_heads,
+            Z=self.attention_head_size,
         )
         K = rearrange(
-            key, "B S (H Z) -> B H S Z", H=self.num_attn_heads, Z=self.attention_head_size
+            key,
+            "B S (H Z) -> B H S Z",
+            H=self.num_attn_heads,
+            Z=self.attention_head_size,
         )
         V = rearrange(
-            value, "B S (H Z) -> B H S Z", H=self.num_attn_heads, Z=self.attention_head_size
+            value,
+            "B S (H Z) -> B H S Z",
+            H=self.num_attn_heads,
+            Z=self.attention_head_size,
         )
 
         # Calculate the attention scores
@@ -120,22 +125,22 @@ class MultiHeadAttentionOptimized(nn.Module):
         attention_scores = torch.matmul(Q, K.transpose(-1, -2))
 
         attention_scores = attention_scores / math.sqrt(self.attention_head_size)
-        attention_probs = nn.functional.softmax(attention_scores, dim=-1)
-        attention_probs = self.attn_dropout(attention_probs)
+        attn_probs = nn.functional.softmax(attention_scores, dim=-1)
+        attn_probs = self.attn_dropout(attn_probs)
 
         # Calculate the attention output
-        attention_output = torch.matmul(attention_probs, V)
+        attn_out = torch.matmul(attn_probs, V)
         # Resize the attention output
         # from (batch_size, num_attention_heads, sequence_length, attention_head_size)
         # To (batch_size, sequence_length, all_head_size)
 
-        attention_output = rearrange(attention_output, "B H S Z -> B S (H Z)")
+        attn_out = rearrange(attn_out, "B H S Z -> B S (H Z)")
 
         # Project the attention output back to the hidden size
-        attention_output = self.output_projection(attention_output)
-        attention_output = self.output_dropout(attention_output)
+        attn_out = self.output_projection(attn_out)
+        attn_out = self.output_dropout(attn_out)
         # Return the attention output and the attention probabilities (optional)
         if not output_attentions:
-            return (attention_output, None)
+            return (attn_out, None)
         else:
-            return (attention_output, attention_probs)
+            return (attn_out, attn_probs)
