@@ -83,6 +83,7 @@ def create_and_validate_config(parsed_config: YAML = None) -> Config:
                 parsed_config[k]["num_classes"] = int(parsed_config[k]["num_classes"])
                 parsed_config[k]["num_channels"] = int(parsed_config[k]["num_channels"])
                 parsed_config[k]["qkv_bias"] = bool(parsed_config[k]["qkv_bias"])
+                parsed_config[k]["use_optimized_attn"] = bool(parsed_config[k]["use_optimized_attn"])
             else:
                 Exception("No configuration in config file.")
 
