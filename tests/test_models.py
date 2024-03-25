@@ -1,9 +1,8 @@
-from vitapp.models.PatchEmbeddings import PatchEmbeddings
-from vitapp.models.PositionEmbeddings import PositionEmbedding
-
 import torch
 
 from vitapp.config.core import config
+from vitapp.models.PatchEmbeddings import PatchEmbeddings
+from vitapp.models.PositionEmbeddings import PositionEmbedding
 
 print(config)
 

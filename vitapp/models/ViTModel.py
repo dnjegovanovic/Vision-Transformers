@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
 
-from .PositionEmbeddings import PositionEmbedding
 from .Encoder import Encoder
+from .PositionEmbeddings import PositionEmbedding
+
 
 class ViT(nn.Module):
     def __init__(self, config):
@@ -33,9 +34,12 @@ class ViT(nn.Module):
             return (logdigits, None)
         else:
             return (logdigits, all_attentions)
+
     def _init_weights(self, module):
         if isinstance(module, (nn.Linear, nn.Conv2d)):
-            torch.nn.init.normal_(module.weight, mean=0.0, std=self.config["initializer_range"])
+            torch.nn.init.normal_(
+                module.weight, mean=0.0, std=self.config["initializer_range"]
+            )
             if module.bias is not None:
                 torch.nn.init.zeros_(module.bias)
         elif isinstance(module, nn.LayerNorm):

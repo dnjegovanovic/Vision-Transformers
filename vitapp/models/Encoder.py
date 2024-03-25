@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 
-from .MultiHeadAttention import MultiHeadAttentionOptimized, MultiHeadAttention
 from .MLP import MLP
+from .MultiHeadAttention import MultiHeadAttention, MultiHeadAttentionOptimized
 
 
 class Block(nn.Module):
@@ -43,10 +43,12 @@ class Block(nn.Module):
         else:
             return (x, attn_prob)
 
+
 class Encoder(nn.Module):
     """
     Encoder Block
     """
+
     def __init__(self, config):
         super().__init__()
         # Create a list of transformer blocks

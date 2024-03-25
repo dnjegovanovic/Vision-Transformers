@@ -1,8 +1,7 @@
-from vitapp.models.MultiHeadAttention import MultiHeadAttentionOptimized
-
 import torch
 
 from vitapp.config.core import config
+from vitapp.models.MultiHeadAttention import MultiHeadAttentionOptimized
 
 
 def test_mha():
